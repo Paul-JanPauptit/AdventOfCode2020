@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day1", "Day1\Day1.csproj", "{A477F9D8-2B06-485C-A3D4-970D30FEC5E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day2", "Day2\Day2.csproj", "{74537145-7B08-4E07-92C0-361A6711C95E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day2", "Day2\Day2.csproj", "{74537145-7B08-4E07-92C0-361A6711C95E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day3", "Day3\Day3.csproj", "{DA36D599-E948-4F9E-923E-69293F5C93FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day3", "Day3\Day3.csproj", "{DA36D599-E948-4F9E-923E-69293F5C93FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day4", "Day4\Day4.csproj", "{4B96A786-BEA6-4F4E-9CA6-4B4F357E699A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day4", "Day4\Day4.csproj", "{4B96A786-BEA6-4F4E-9CA6-4B4F357E699A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day5", "Day5\Day5.csproj", "{468C16DD-071C-4BDB-A8AC-A372C687E70F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{4B96A786-BEA6-4F4E-9CA6-4B4F357E699A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B96A786-BEA6-4F4E-9CA6-4B4F357E699A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B96A786-BEA6-4F4E-9CA6-4B4F357E699A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{468C16DD-071C-4BDB-A8AC-A372C687E70F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{468C16DD-071C-4BDB-A8AC-A372C687E70F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{468C16DD-071C-4BDB-A8AC-A372C687E70F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{468C16DD-071C-4BDB-A8AC-A372C687E70F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
