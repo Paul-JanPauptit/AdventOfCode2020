@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace Day5
 {
@@ -7,41 +8,33 @@ namespace Day5
   {
     static void Main(string[] args)
     {
-      var maxID = 0;
       var lines = File.ReadAllLines("input.txt");
-      foreach (var code in lines)
-      {
-        maxID = Math.Max(maxID, GetSeatID(code));
-      }
+      var seatIDs = lines.Select(GetSeatID).ToList();
       
-      Console.Write($"Part 1) Max. seat ID: {maxID}");
+      // 835
+      Console.WriteLine($"Part 1) Max. seat ID: {seatIDs.Max()}");
+
+      seatIDs.Sort();
+      var prevID = seatIDs.First();
+      foreach (var id in seatIDs.Skip(1))
+      {
+        if (id - 1 > prevID)
+        {
+          Console.WriteLine($"Part 2) Found empty seat: {id - 1}");
+          break;
+        }
+        prevID = id;
+      }
+
     }
 
     static int GetSeatID(string code)
     {
-      var row = GetPartition(code.Substring(0, 7), 127);
-      var seat = GetPartition(code.Substring(7), 7);
-
-      return row * 8 + seat;
-    }
-
-    static int GetPartition(string code, int range)
-    {
-      var minValue = 0;
-      var maxValue = range;
-
-      foreach (var character in code)
-      {
-        var midPoint = (minValue + maxValue) / 2;
-        if (character == 'B' || character == 'R')
-          minValue = midPoint + 1;
-        else
-          maxValue = midPoint;
-      }
-
-      if (minValue < maxValue)
-        throw new Exception("Partition failed");
-      return minValue;
+      return Convert.ToInt32(code.
+        Replace('B', '1').
+        Replace('F', '0').
+        Replace('R', '1').
+        Replace('L', '0'), 2);
     }
   }
 }
