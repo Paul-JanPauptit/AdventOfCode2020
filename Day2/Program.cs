@@ -38,11 +38,7 @@ namespace Day2
 
     private static bool IsValidPassword1(string password, int minOccurences, int maxOccurences, char character)
     {
-      var occurences = 0;
-      foreach (var c in password)
-        if (c == character)
-          occurences++;
-
+      var occurences = password.Count(c => c == character);
       return (minOccurences <= occurences) && (maxOccurences >= occurences);
     }
 
