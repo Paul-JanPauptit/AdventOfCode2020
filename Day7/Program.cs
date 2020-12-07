@@ -7,13 +7,17 @@ namespace Day7
 {
   class Program
   {
-    static void Main(string[] args)
+    static void Main()
     {
       var lines = File.ReadLines("input.txt").ToList();
       var bags = ParseBags(lines);
       var numHoldingBags = CountBagsHolding(bags, "shiny gold");
 
       Console.WriteLine($"Part 1 - {numHoldingBags}");
+
+      // -1 because we don't want to count the outer Shiny Gold bag itself.
+      var numBagsInside = CountBagsWithContents(bags, "shiny gold") - 1;
+      Console.WriteLine($"Part 2 - {numBagsInside}");
 
     }
 
@@ -40,11 +44,17 @@ namespace Day7
 
       while (!done)
       {
-        while (char.IsDigit(line[index]))
-          index++;
+        var bagContents = new BagContents();
+        bag.Contents.Add(bagContents);
+
+        var nextIndex = index;
+        while (char.IsDigit(line[nextIndex]))
+          nextIndex++;
+        bagContents.Count = Convert.ToInt32(line.Substring(index, nextIndex - index));
+        index = nextIndex;
         index++;
-        var nextIndex = line.IndexOf( separatorMarker, index, StringComparison.Ordinal);
-        bag.Contents.Add(line.Substring(index, nextIndex - index));
+        nextIndex = line.IndexOf( separatorMarker, index, StringComparison.Ordinal);
+        bagContents.Color = line.Substring(index, nextIndex - index);
         index = nextIndex + separatorMarker.Length;
         if (line[index] == 's')
           index++;
@@ -66,15 +76,15 @@ namespace Day7
       return count;
     }
 
-    private static bool ContentsContainColor(List<string> contents, string color, List<Bag> bags)
+    private static bool ContentsContainColor(List<BagContents> contents, string color, List<Bag> bags)
     {
-      if (contents.Contains(color))
+      if (contents.Any(c => c.Color == color))
         return true;
 
-      foreach (var contentColor in contents)
+      foreach (var bagContents in contents)
       {
         // Look inside nested bags
-        var bag = bags.Single(b => b.Color == contentColor);
+        var bag = bags.Single(b => b.Color == bagContents.Color);
         if (ContentsContainColor(bag.Contents, color, bags))
           return true;
       }
@@ -82,10 +92,30 @@ namespace Day7
       return false;
     }
 
+    private static int CountBagsWithContents(List<Bag> bags, string color)
+    {
+      var bag = bags.Single(b => b.Color == color);
+
+      var count = 1;
+      foreach (var bagContents in bag.Contents)
+      {
+        count += bagContents.Count * CountBagsWithContents(bags, bagContents.Color);
+      }
+
+      return count;
+    }
+
+
     private class Bag
     {
       public string Color { get; set; }
-      public List<string> Contents { get; set; } = new List<string>();
+      public List<BagContents> Contents { get; } = new List<BagContents>();
+    }
+
+    private class BagContents
+    {
+      public int Count { get; set; }
+      public string Color { get; set; }
     }
   }
 }
