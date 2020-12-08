@@ -13,12 +13,22 @@ namespace Day8
       var program = ReadProgram(lines);
 
       ExecuteProgram(program);
-      
-      Console.Write($"Part 1: {program.State.Accumulator}");
+      Console.WriteLine($"Part 1: {program.State.Accumulator}");
+
+      var finished = false;
+      var patchIndex = 0;
+      while (!finished)
+        finished = PatchProgram(program, patchIndex++);
+      Console.WriteLine($"Part 2: {program.State.Accumulator}");
     }
 
-    private static void ExecuteProgram(BootProgram program)
+    private static bool ExecuteProgram(BootProgram program)
     {
+      // Reset execution state
+      foreach (var instruction in program.Instructions)
+        instruction.IsExecuted = false;
+      program.State.Accumulator = 0;
+
       var ip = 0;
       var instructions = program.Instructions;
       var state = program.State;
@@ -26,7 +36,7 @@ namespace Day8
       {
         var instruction = instructions[ip];
         if (instruction.IsExecuted)
-          return; // We are done
+          return false; // we stop but didn't finish
         instruction.IsExecuted = true;
         switch (instruction.Operation)
         {
@@ -53,6 +63,28 @@ namespace Day8
             throw new Exception($"Unpexpected instruction: {instruction.Operation}");
         }
       }
+
+      return true;
+    }
+
+    private static bool PatchProgram(BootProgram program, int patchIndex)
+    {
+      // Only works after executing once, we find the latest executed jmp instruction and patch to nop
+      var lastInstruction = program.Instructions.AsEnumerable()?.Skip(patchIndex).FirstOrDefault(i => i.Operation == "jmp" || i.Operation == "nop");
+      if (lastInstruction == null)
+        throw new Exception($"Found no more instructions to patch (patched {patchIndex + 1}");
+      
+      // Patch and check if we finish now
+      PatchOperation(lastInstruction);
+      var result = ExecuteProgram(program);
+      PatchOperation(lastInstruction); // Patch it back, so the next run gets a clean app
+
+      return result;
+    }
+
+    private static void PatchOperation(Instruction instruction)
+    {
+      instruction.Operation = instruction.Operation == "jmp" ? "nop" : "jmp";
     }
 
     private static BootProgram ReadProgram(List<string> lines)
