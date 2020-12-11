@@ -17,14 +17,25 @@ namespace Day11
       var hasChanged = true;
       while (hasChanged)
       {
-        Console.WriteLine(($"Round {round}:\r\n----------------"));
-        seatMap.Dump();
-        Console.WriteLine();
-        seatMap = ProcessRound(seatMap, out hasChanged);
+        seatMap = ProcessRound1(seatMap, out hasChanged);
         round++;
       }
 
-      Console.WriteLine($"Part 0: {seatMap.NumOccupied}");
+      Console.WriteLine($"Part 1: {seatMap.NumOccupied}");
+
+      seatMap = ReadSeatMap(lines);
+      round = 0;
+      hasChanged = true;
+      while (hasChanged)
+      {
+        Console.WriteLine(($"Round {round}:\r\n----------------"));
+        seatMap.Dump();
+        Console.WriteLine();
+        seatMap = ProcessRound2(seatMap, out hasChanged);
+        round++;
+      }
+
+      Console.WriteLine($"Part 2: {seatMap.NumOccupied}");
     }
 
     private static SeatMap ReadSeatMap(List<string> lines)
@@ -50,7 +61,7 @@ namespace Day11
       return seatMap;
     }
 
-    private static SeatMap ProcessRound(SeatMap seatMap, out bool hasChanged)
+    private static SeatMap ProcessRound1(SeatMap seatMap, out bool hasChanged)
     {
       var result = new SeatMap(seatMap.NumCols, seatMap.NumRows);
       hasChanged = false;
@@ -78,6 +89,36 @@ namespace Day11
 
       return result;
     }
+
+    private static SeatMap ProcessRound2(SeatMap seatMap, out bool hasChanged)
+    {
+      var result = new SeatMap(seatMap.NumCols, seatMap.NumRows);
+      hasChanged = false;
+
+      for (var row = 0; row < seatMap.NumRows; row++)
+      {
+        for (var col = 0; col < seatMap.NumCols; col++)
+        {
+          var slot = seatMap.Slots[row][col];
+          var visibleSeats = seatMap.GetVisibleSeats(row, col);
+          if (slot == MapSlot.Empty && visibleSeats.All(s => s != MapSlot.Occupied))
+          {
+            slot = MapSlot.Occupied;
+            hasChanged = true;
+          }
+          else if (slot == MapSlot.Occupied && visibleSeats.Count(s => s == MapSlot.Occupied) >= 5)
+          {
+            slot = MapSlot.Empty;
+            hasChanged = true;
+          }
+
+          result.Slots[row][col] = slot;
+        }
+      }
+
+      return result;
+    }
+
 
     class SeatMap
     {
@@ -112,6 +153,42 @@ namespace Day11
         return slots;
       }
 
+      public List<MapSlot> GetVisibleSeats(int row, int col)
+      {
+        var seats = new List<MapSlot>();
+        var directions = new List<Direction>
+        {
+          new Direction { X = -1, Y = -1 },
+          new Direction { X =  0, Y = -1 },
+          new Direction { X = +1, Y = -1 },
+          new Direction { X = -1, Y =  0 },
+          new Direction { X = +1, Y =  0 },
+          new Direction { X = -1, Y = +1 },
+          new Direction { X =  0, Y = +1 },
+          new Direction { X = +1, Y = +1 },
+        };
+        foreach (var direction in directions)
+        {
+          var y = row;
+          var x = col;
+          MapSlot seat;
+          do
+          {
+            x += direction.X;
+            y += direction.Y;
+            if (y < 0 || y >= NumRows || x < 0 || x >= NumCols)
+              seat = MapSlot.OutOfBounds;
+            else
+              seat = Slots[y][x];
+          } while (seat == MapSlot.Floor);
+
+          if (seat == MapSlot.Empty || seat == MapSlot.Occupied)
+            seats.Add(seat);
+        }
+        
+        return seats;
+      }
+
       public void Dump()
       {
         foreach (var row in Slots)
@@ -135,7 +212,15 @@ namespace Day11
     {
       Floor,
       Empty,
-      Occupied
+      Occupied,
+      OutOfBounds
+    }
+
+    public class Direction
+    {
+      public int X;
+      public int Y;
+
     }
   }
 
