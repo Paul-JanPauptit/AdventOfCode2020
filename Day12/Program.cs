@@ -11,8 +11,12 @@ namespace Day12
     {
       var lines = File.ReadAllLines("input.txt").ToList();
       var ship = new Ship();
-      ship.ExecuteInstructions(lines);
-      Console.WriteLine($"Part 0: {ship.Distance}");
+      ship.ExecuteInstructions1(lines);
+      Console.WriteLine($"Part 1: {ship.Distance}");
+
+      ship = new Ship();
+      ship.ExecuteInstructions2(lines);
+      Console.WriteLine($"Part 2: {ship.Distance}");
     }
 
 
@@ -21,6 +25,9 @@ namespace Day12
       public Direction Direction = Direction.East;
       public int X { get; set; }
       public int Y { get; set; }
+
+      public int WaypointDeltaX { get; set; } = 10;
+      public int WaypointDeltaY { get; set; } = -1;
 
       public int Distance => Math.Abs(X) + Math.Abs(Y);
 
@@ -33,7 +40,7 @@ namespace Day12
       };
 
 
-      public void ExecuteInstructions(List<string> lines)
+      public void ExecuteInstructions1(List<string> lines)
       {
         foreach (var line in lines)
         {
@@ -72,6 +79,60 @@ namespace Day12
               }
 
               default: 
+                throw new Exception($"Unexpected action {action}");
+            }
+          }
+        }
+      }
+
+      public void ExecuteInstructions2(List<string> lines)
+      {
+        foreach (var line in lines)
+        {
+          var action = line.Substring(0, 1);
+          var amount = Convert.ToInt32(line.Substring(1));
+          var direction = DirectionInfos.FirstOrDefault(d => d.Action == action);
+          if (direction != null)
+          {
+            WaypointDeltaX += amount * direction.DeltaX;
+            WaypointDeltaY += amount * direction.DeltaY;
+          }
+          else
+          {
+            switch (action)
+            {
+              case "L":
+              {
+                for (var i = 0; i < amount / 90; i++)
+                {
+                  var x = 1 * WaypointDeltaY;
+                  var y = -1 * WaypointDeltaX;
+                  WaypointDeltaX = x;
+                  WaypointDeltaY = y;
+                }
+                break;
+              }
+
+              case "R":
+              {
+                for (var i = 0; i < amount / 90; i++)
+                {
+                  var x = -1 * WaypointDeltaY;
+                  var y = 1 * WaypointDeltaX;
+                  WaypointDeltaX = x;
+                  WaypointDeltaY = y;
+                }
+                break;
+              }
+
+              case "F":
+              {
+                X += amount * WaypointDeltaX;
+                Y += amount * WaypointDeltaY;
+                break;
+              }
+
+              default:
                 throw new Exception($"Unexpected action {action}");
             }
           }
