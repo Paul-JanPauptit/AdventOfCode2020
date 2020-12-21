@@ -11,12 +11,14 @@ namespace Day14
     static void Main()
     {
       var lines = File.ReadAllLines("input.txt").ToList();
-      var result = ExecuteProgram(lines);
+      var result = ExecuteProgram1(lines);
 
-      Console.WriteLine($"Part 0 - {result}");
+      Console.WriteLine($"Part 1 - {result}");
+
+
     }
 
-    private static long ExecuteProgram(List<string> lines)
+    private static long ExecuteProgram1(List<string> lines)
     {
       var memory = new SortedDictionary<long, long>();
       var mask = new DualMask();
